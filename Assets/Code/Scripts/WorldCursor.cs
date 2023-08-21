@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-namespace Code.Scripts.Player
+namespace Code.Scripts
 {
     public class WorldCursor : CachedBehaviour
     {
@@ -12,6 +13,9 @@ namespace Code.Scripts.Player
         {
             if (_camera == null)
                 _camera = Camera.current;
+            
+            if (_camera == null)
+                throw new NullReferenceException("Can't find camera");
         }
 
         private void Update()

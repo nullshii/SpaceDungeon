@@ -23,7 +23,7 @@ namespace Code.Scripts.Player
 
         private void FixedUpdate()
         {
-            _rigidbody.velocity = _direction * (_speed * Time.deltaTime);
+            _rigidbody.velocity = _direction * _speed;
         }
     }
 }
