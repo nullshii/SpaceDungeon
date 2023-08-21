@@ -8,19 +8,20 @@ namespace Code.Scripts.Level
         [SerializeField] private BoxCollider2D _collider;
         [SerializeField] private SpriteRenderer _spriteRenderer;
         
-        private bool _isDisabled;
+        private bool _isEnabled;
+        private bool _isInitialized;
 
-        public void Disable()
+        public void Initialize(bool isEnabled)
         {
-            if (_isDisabled)
+            if (_isInitialized)
                 throw new InvalidOperationException("Door already disabled");
 
-            _isDisabled = true;
+            _isEnabled = isEnabled;
         }
         
         public void Open()
         {
-            if (_isDisabled) return;
+            if (_isEnabled == false) return;
 
             _collider.enabled = false;
             _spriteRenderer.enabled = false;
@@ -28,7 +29,7 @@ namespace Code.Scripts.Level
 
         public void Close()
         {
-            if (_isDisabled) return;
+            if (_isEnabled == false) return;
             
             _collider.enabled = true;
             _spriteRenderer.enabled = true;
