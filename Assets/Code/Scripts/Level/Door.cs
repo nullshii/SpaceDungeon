@@ -7,7 +7,7 @@ namespace Code.Scripts.Level
     {
         [SerializeField] private BoxCollider2D _collider;
         [SerializeField] private SpriteRenderer _spriteRenderer;
-        
+
         private bool _isEnabled;
         private bool _isInitialized;
 
@@ -18,7 +18,7 @@ namespace Code.Scripts.Level
 
             _isEnabled = isEnabled;
         }
-        
+
         public void Open()
         {
             if (_isEnabled == false) return;
@@ -30,7 +30,7 @@ namespace Code.Scripts.Level
         public void Close()
         {
             if (_isEnabled == false) return;
-            
+
             _collider.enabled = true;
             _spriteRenderer.enabled = true;
         }

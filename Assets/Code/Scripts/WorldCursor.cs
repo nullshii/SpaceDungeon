@@ -13,7 +13,7 @@ namespace Code.Scripts
         {
             if (_camera == null)
                 _camera = Camera.current;
-            
+
             if (_camera == null)
                 throw new NullReferenceException("Can't find camera");
         }

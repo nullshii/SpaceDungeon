@@ -17,7 +17,7 @@ namespace Code.Scripts.Player
 
         private void Update()
         {
-            _direction = Input.GetAxis("Horizontal") * Vector2.right 
+            _direction = Input.GetAxis("Horizontal") * Vector2.right
                          + Input.GetAxis("Vertical") * Vector2.up;
         }
 
