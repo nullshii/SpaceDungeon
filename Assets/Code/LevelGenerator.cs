@@ -1,58 +1,73 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Code.Presenters;
-using Object = UnityEngine.Object;
-using Random = UnityEngine.Random;
 
 namespace Code
 {
     public class LevelGenerator
     {
-        private readonly List<Vector2> _roomGrid;
         private readonly RoomPresenter _roomPresenterSample;
 
-        public LevelGenerator()
+        private readonly Vector2Int _gridSize;
+        private readonly bool[,] _visitedRooms;
+        private readonly Vector2Int[] _directions;
+
+
+        public LevelGenerator(Vector2Int gridSize)
         {
-            _roomGrid = new List<Vector2>();
+            _gridSize = gridSize;
+            _visitedRooms = new bool[gridSize.x, gridSize.y];
             _roomPresenterSample = Resources.Load<RoomPresenter>("Prefabs/Room");
+            _directions = new[] { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
         }
 
-        public void Generate(int roomCount)
+        public void Generate()
         {
-            var checkedRooms = new List<Vector2>();
-            
-            _roomGrid.Add(Vector2.zero);
-
-            while (_roomGrid.Count < roomCount)
+            for (var x = 0; x < _gridSize.x; x++)
             {
-                Vector2 direction = Random.Range(0, 4) switch
+                for (var y = 0; y < _gridSize.y; y++)
                 {
-                    0 => Vector2.up,
-                    1 => Vector2.down,
-                    2 => Vector2.left,
-                    3 => Vector2.right,
-                    _ => throw new ArgumentOutOfRangeException()
-                };
-
-                Vector2 randomRoom = _roomGrid[Random.Range(0, _roomGrid.Count)];
-                
-                if (checkedRooms.Contains(randomRoom)) continue;
-                
-                checkedRooms.Add(randomRoom);
-                _roomGrid.Add(randomRoom + direction * Room.Offset);
+                    if (!_visitedRooms[x, y])
+                    {
+                        GenerateBranch(x, y);
+                    }
+                }
             }
+        }
 
-            foreach (Vector2 vector2 in _roomGrid)
+        // TODO: Remove duplicated rooms!
+        void GenerateBranch(int startX, int startY)
+        {
+            var stack = new Stack<Vector2Int>();
+            stack.Push(new Vector2Int(startX, startY));
+
+            while (stack.Count > 0)
             {
-                var room = new Room(true, false, false, false);
-                RoomPresenter roomPresenter = Object.Instantiate(_roomPresenterSample);
+                Vector2Int currentPos = stack.Pop();
+                _visitedRooms[currentPos.x, currentPos.y] = true;
 
-                roomPresenter.transform.position = vector2;
+                var roomPosition = new Vector3(currentPos.x * Room.Offset, currentPos.y * Room.Offset, 0);
                 
+                var room = new Room(true, true, true, true);
+                RoomPresenter roomPresenter = Object.Instantiate(_roomPresenterSample, roomPosition, Quaternion.identity);
+            
                 roomPresenter.Init(room);
                 room.OpenDoors();
+                
+                foreach (Vector2Int direction in _directions)
+                {
+                    Vector2Int neighborPos = currentPos + direction;
+                    if (IsPositionValid(neighborPos) && !_visitedRooms[neighborPos.x, neighborPos.y])
+                    {
+                        stack.Push(neighborPos);
+                    }
+                }
             }
+        }
+
+        bool IsPositionValid(Vector2Int pos)
+        {
+            return pos.x >= 0 && pos.x < _gridSize.x && pos.y >= 0 && pos.y < _gridSize.y;
         }
     }
 }

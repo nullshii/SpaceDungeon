@@ -4,18 +4,18 @@ namespace Code
 {
     public class Boot : MonoBehaviour
     {
-        [SerializeField] private int _roomCount;
+        [SerializeField] private Vector2Int _gridSize;
         
         private LevelGenerator _levelGenerator;
 
         private void Awake()
         {
-            _levelGenerator = new LevelGenerator();
+            _levelGenerator = new LevelGenerator(_gridSize);
         }
 
         private void Start()
         {
-            _levelGenerator.Generate(_roomCount);
+            _levelGenerator.Generate();
         }
     }
 }
